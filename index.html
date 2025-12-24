@@ -1,18 +1,23 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smile Coin Calculator</title>
+    <title>Sakura Coin Calculator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        primary: '#6366f1', // Indigo
-                        secondary: '#ec4899', // Pink
+                        sakura: {
+                            50: '#fff0f5',   // Lavender Blush
+                            100: '#ffe4e1',  // Misty Rose
+                            300: '#ffb7c5',  // Cherry Blossom Pink
+                            500: '#ff69b4',  // Hot Pink
+                            700: '#c71585',  // Medium Violet Red
+                            900: '#8b0a50',  // Dark Magenta
+                        }
                     }
                 }
             }
@@ -20,82 +25,89 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Smooth transitions for theme switching */
-        body { transition: background-color 0.3s, color 0.3s; }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Sakura Background */
+        body {
+            background-color: #fff0f5;
+            background-image: radial-gradient(#ffb7c5 1px, transparent 1px);
+            background-size: 20px 20px;
         }
-        .dark .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        /* Glass Effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        /* Single Line Enforcement */
+        td, th {
+            white-space: nowrap;
         }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-800 dark:bg-slate-900 dark:text-gray-100 min-h-screen font-sans">
+<body class="text-gray-800 min-h-screen font-sans selection:bg-sakura-300 selection:text-sakura-900">
 
-    <nav class="w-full p-4 glass-panel sticky top-0 z-50 shadow-sm">
+    <nav class="w-full p-4 glass sticky top-0 z-50 shadow-sm border-b border-sakura-100">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
-                <i class="fa-solid fa-gem mr-2"></i>Diamond Calc
+            <h1 class="text-2xl font-bold text-sakura-700 flex items-center gap-2">
+                <i class="fa-solid fa-fan fa-spin-pulse" style="--fa-animation-duration: 3s;"></i>
+                <span>Sakura Calc</span>
             </h1>
-            <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 transition">
-                <i class="fa-solid fa-moon dark:hidden"></i>
-                <i class="fa-solid fa-sun hidden dark:inline text-yellow-400"></i>
-            </button>
+            <div class="text-xs font-medium text-sakura-500 bg-white px-3 py-1 rounded-full shadow-sm">
+                MLBB Recharge
+            </div>
         </div>
     </nav>
 
     <main class="max-w-4xl mx-auto p-4 md:p-6">
         
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg mb-8 border border-gray-200 dark:border-slate-700">
-            <h2 class="text-lg font-semibold mb-4 text-gray-600 dark:text-gray-300">Settings</h2>
+        <div class="glass rounded-3xl p-6 shadow-xl shadow-sakura-100 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <div class="relative">
-                    <label class="block text-sm font-medium mb-1 text-gray-500 dark:text-gray-400">Cost of 1000 Coins (MMK)</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-2.5 text-gray-400">K</span>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-sakura-700 mb-1">
+                        1000 Coins Cost (MMK)
+                    </label>
+                    <div class="relative group">
+                        <span class="absolute left-3 top-2.5 text-sakura-400 font-bold">K</span>
                         <input type="number" id="coinPrice" value="5000" 
-                            class="w-full pl-8 pr-4 py-2 rounded-lg bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-primary outline-none transition"
+                            class="w-full pl-8 pr-4 py-2 rounded-xl bg-white border border-sakura-200 focus:border-sakura-500 focus:ring-2 focus:ring-sakura-200 outline-none transition font-semibold text-gray-700"
                             placeholder="e.g. 5000">
                     </div>
                 </div>
 
-                <div class="relative">
-                    <label class="block text-sm font-medium mb-1 text-gray-500 dark:text-gray-400">Profit Margin (%)</label>
-                    <div class="relative">
-                        <span class="absolute right-3 top-2.5 text-gray-400">%</span>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-sakura-700 mb-1">
+                        Profit Margin (%)
+                    </label>
+                    <div class="relative group">
+                        <span class="absolute right-3 top-2.5 text-sakura-400 font-bold">%</span>
                         <input type="number" id="profitMargin" value="10" 
-                            class="w-full pl-4 pr-8 py-2 rounded-lg bg-gray-50 dark:bg-slate-900 border border-gray-300 dark:border-slate-600 focus:ring-2 focus:ring-secondary outline-none transition"
+                            class="w-full pl-4 pr-8 py-2 rounded-xl bg-white border border-sakura-200 focus:border-sakura-500 focus:ring-2 focus:ring-sakura-200 outline-none transition font-semibold text-gray-700"
                             placeholder="e.g. 10">
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="flex space-x-2 mb-4">
-            <button onclick="switchTab('ph')" id="btn-ph" class="flex-1 py-2 rounded-lg font-medium transition bg-primary text-white shadow-lg shadow-primary/30">
+        <div class="flex p-1 bg-white/50 rounded-xl mb-4 shadow-inner">
+            <button onclick="switchTab('ph')" id="btn-ph" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-300">
                 🇵🇭 Philippines
             </button>
-            <button onclick="switchTab('br')" id="btn-br" class="flex-1 py-2 rounded-lg font-medium transition bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300">
+            <button onclick="switchTab('br')" id="btn-br" class="flex-1 py-2 rounded-lg text-sm font-bold transition-all duration-300">
                 🇧🇷 Brazil
             </button>
         </div>
 
-        <div class="overflow-hidden rounded-2xl shadow-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+        <div class="glass rounded-2xl shadow-lg overflow-hidden border border-sakura-100">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+                <table class="w-full text-left">
                     <thead>
-                        <tr class="bg-gray-50 dark:bg-slate-700/50 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wider">
-                            <th class="p-4 font-medium">Item Name</th>
-                            <th class="p-4 font-medium text-right">Coin Cost</th>
-                            <th class="p-4 font-medium text-right">Base Cost (MMK)</th>
-                            <th class="p-4 font-medium text-right text-primary">Selling Price (MMK)</th>
+                        <tr class="bg-sakura-100/50 text-sakura-900 text-xs uppercase tracking-wider">
+                            <th class="p-4 font-bold border-b border-sakura-200">Item</th>
+                            <th class="p-4 font-bold border-b border-sakura-200 text-right">Coins</th>
+                            <th class="p-4 font-bold border-b border-sakura-200 text-right text-sakura-400">Capital</th>
+                            <th class="p-4 font-bold border-b border-sakura-200 text-right text-sakura-700">Selling Price</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body" class="divide-y divide-gray-100 dark:divide-slate-700 text-sm">
+                    <tbody id="table-body" class="text-sm divide-y divide-sakura-50">
                         </tbody>
                 </table>
             </div>
@@ -103,7 +115,6 @@
     </main>
 
     <script>
-        // Data from your prompt
         const data = {
             ph: [
                 { name: "11 Diamonds", coins: 9.5 },
@@ -121,10 +132,11 @@
                 { name: "1163 Diamonds", coins: 950.0 },
                 { name: "2398 Diamonds", coins: 1900.0 },
                 { name: "6042 Diamonds", coins: 4750.0 },
-                { name: "SVP (Weekly)", coins: 47.45 },
-                { name: "TWP (Twilight)", coins: 475.0 }
+                { name: "Weekly Pass (SVP)", coins: 47.45 },
+                { name: "Twilight Pass (TWP)", coins: 475.0 }
             ],
             br: [
+                { name: "Weekly Pass (WP)", coins: 76.0 }, // New item added
                 { name: "86 Diamonds", coins: 61.5 },
                 { name: "172 Diamonds", coins: 122.0 },
                 { name: "257 Diamonds", coins: 177.5 },
@@ -149,63 +161,46 @@
                 { name: "3688 Diamonds", coins: 2424.0 },
                 { name: "5532 Diamonds", coins: 3660.0 },
                 { name: "9288 Diamonds", coins: 6079.0 },
-                { name: "TWP", coins: 402.5 },
-                { name: "SVP", coins: 39 },
-                { name: "LVP", coins: 12 },
-                { name: "B50", coins: 39 },
-                { name: "B150", coins: 116.9 },
-                { name: "B250", coins: 187.5 },
-                { name: "B500", coins: 385.0 },
-                { name: "ABE", coins: 728.4 },
-                { name: "T3", coins: 343.4 }
+                { name: "Twilight Pass (TWP)", coins: 402.5 },
+                { name: "Super Value Pass (SVP)", coins: 39 },
+                { name: "Limited Value (LVP)", coins: 12 },
+                { name: "Bundle 50 (B50)", coins: 39 },
+                { name: "Bundle 150 (B150)", coins: 116.9 },
+                { name: "Bundle 250 (B250)", coins: 187.5 },
+                { name: "Bundle 500 (B500)", coins: 385.0 },
+                { name: "Aurora/Event (ABE)", coins: 728.4 },
+                { name: "T3 Promo", coins: 343.4 }
             ]
         };
 
         let currentRegion = 'ph';
 
-        // DOM Elements
         const coinPriceInput = document.getElementById('coinPrice');
         const profitMarginInput = document.getElementById('profitMargin');
         const tableBody = document.getElementById('table-body');
-        const themeToggle = document.getElementById('theme-toggle');
+        const btnPh = document.getElementById('btn-ph');
+        const btnBr = document.getElementById('btn-br');
 
-        // Initial Render
         renderTable();
 
-        // Event Listeners
         coinPriceInput.addEventListener('input', renderTable);
         profitMarginInput.addEventListener('input', renderTable);
-        
-        themeToggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-        });
 
-        // Functions
         function switchTab(region) {
             currentRegion = region;
-            
-            // Update Buttons
-            const btnPh = document.getElementById('btn-ph');
-            const btnBr = document.getElementById('btn-br');
-            
-            if (region === 'ph') {
-                setBtnActive(btnPh);
-                setBtnInactive(btnBr);
-            } else {
-                setBtnActive(btnBr);
-                setBtnInactive(btnPh);
-            }
             renderTable();
         }
 
-        function setBtnActive(btn) {
-            btn.className = "flex-1 py-2 rounded-lg font-medium transition bg-primary text-white shadow-lg shadow-primary/30";
-        }
-        function setBtnInactive(btn) {
-            btn.className = "flex-1 py-2 rounded-lg font-medium transition bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-600 dark:text-gray-300";
-        }
-
         function renderTable() {
+            // Button Styles
+            if (currentRegion === 'ph') {
+                btnPh.className = "flex-1 py-2 rounded-lg text-sm font-bold shadow-md bg-sakura-500 text-white transform scale-100";
+                btnBr.className = "flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-sakura-100 transition";
+            } else {
+                btnBr.className = "flex-1 py-2 rounded-lg text-sm font-bold shadow-md bg-sakura-500 text-white transform scale-100";
+                btnPh.className = "flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 hover:bg-sakura-100 transition";
+            }
+
             const mmkPer1000 = parseFloat(coinPriceInput.value) || 0;
             const profitPercent = parseFloat(profitMarginInput.value) || 0;
             const coinRate = mmkPer1000 / 1000;
@@ -217,21 +212,28 @@
                 const sellingPrice = baseCost * (1 + (profitPercent / 100));
 
                 return `
-                    <tr class="hover:bg-gray-50 dark:hover:bg-slate-700/30 transition">
-                        <td class="p-4 font-semibold text-gray-700 dark:text-gray-200">${item.name}</td>
-                        <td class="p-4 text-right text-gray-500 dark:text-gray-400">$${item.coins}</td>
-                        <td class="p-4 text-right text-gray-500 dark:text-gray-400 font-mono">${formatCurrency(baseCost)}</td>
-                        <td class="p-4 text-right font-bold text-primary text-lg font-mono">${formatCurrency(sellingPrice)}</td>
+                    <tr class="group hover:bg-sakura-50 transition-colors duration-200">
+                        <td class="p-4 font-semibold text-gray-700 group-hover:text-sakura-700">
+                            ${item.name}
+                        </td>
+                        <td class="p-4 text-right text-gray-500 font-mono text-xs">
+                            $${item.coins}
+                        </td>
+                        <td class="p-4 text-right text-sakura-400 font-mono text-xs opacity-70">
+                            ${formatCurrency(baseCost)}
+                        </td>
+                        <td class="p-4 text-right font-bold text-sakura-700 text-base font-mono">
+                            ${formatCurrency(sellingPrice)}
+                        </td>
                     </tr>
                 `;
             }).join('');
         }
 
         function formatCurrency(num) {
-            // Formats to Myanmar currency style (commas, no decimals if whole)
             return num.toLocaleString('en-US', {
                 minimumFractionDigits: 0,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 0
             }) + " K";
         }
     </script>
