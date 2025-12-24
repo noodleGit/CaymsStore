@@ -30,17 +30,21 @@
         .sunset { --bg-color: #fff7ed; --color-50: #fff7ed; --color-100: #ffedd5; --color-300: #fdba74; --color-500: #f97316; --color-600: #ea580c; --color-700: #c2410c; }
         .midnight { --bg-color: #0f172a; --color-50: #1e293b; --color-100: #334155; --color-300: #475569; --color-500: #818cf8; --color-600: #6366f1; --color-700: #4f46e5; color: white; }
 
-        body { background-color: var(--bg-color); background-image: var(--bg-dot); background-size: 20px 20px; transition: all 0.4s ease; }
+        body { background-color: var(--bg-color); background-image: var(--bg-dot); background-size: 20px 20px; transition: all 0.4s ease; overflow-x: hidden; }
         .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3); }
         .midnight .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
         .midnight input { background: #1e293b; color: white; border-color: #475569; }
+        
+        /* Fixed Horizontal Scroll for Mobile */
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { min-width: 500px; width: 100%; border-collapse: collapse; }
         td, th { white-space: nowrap; }
     </style>
 </head>
 <body class="text-gray-800 min-h-screen font-sans pb-10">
 
     <nav class="w-full p-4 glass sticky top-0 z-50 shadow-sm border-b border-theme-100">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <div class="max-w-4xl mx-auto flex justify-between items-center px-2">
             <h1 class="text-xl font-black text-theme-700 tracking-tighter uppercase">CAYM’S STORE</h1>
             <div class="flex gap-2">
                 <button onclick="setTheme('sakura')" class="w-6 h-6 rounded-full bg-pink-400 border-2 border-white shadow-sm hover:scale-110 transition"></button>
@@ -51,16 +55,16 @@
         </div>
     </nav>
 
-    <main class="max-w-4xl mx-auto p-4 md:p-6">
+    <main class="max-w-4xl mx-auto p-4">
         <div class="glass rounded-3xl p-6 shadow-xl mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-xs font-bold uppercase tracking-widest text-theme-700 mb-1">Cost of 1000 Coins (MMK)</label>
-                    <input type="number" id="coinPrice" class="w-full px-4 py-3 rounded-xl border border-theme-100 outline-none focus:ring-2 focus:ring-theme-500 font-bold text-lg" placeholder="Enter cost...">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-theme-700 mb-1">Cost (1000 Coins)</label>
+                    <input type="number" id="coinPrice" class="w-full px-4 py-3 rounded-xl border border-theme-100 outline-none focus:ring-2 focus:ring-theme-500 font-bold text-lg" placeholder="MMK">
                 </div>
                 <div>
                     <label class="block text-xs font-bold uppercase tracking-widest text-theme-700 mb-1">Profit (%)</label>
-                    <input type="number" id="profitMargin" class="w-full px-4 py-3 rounded-xl border border-theme-100 outline-none focus:ring-2 focus:ring-theme-500 font-bold text-lg" placeholder="Enter profit %...">
+                    <input type="number" id="profitMargin" class="w-full px-4 py-3 rounded-xl border border-theme-100 outline-none focus:ring-2 focus:ring-theme-500 font-bold text-lg" placeholder="%">
                 </div>
             </div>
         </div>
@@ -72,22 +76,25 @@
 
         <div class="flex justify-end mb-4">
             <button onclick="copyToClipboard()" class="bg-theme-600 hover:bg-theme-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-theme-500/40 flex items-center gap-2 active:scale-95 transition">
-                <i class="fa-solid fa-clipboard-list"></i> Copy for Customer
+                <i class="fa-solid fa-copy"></i> Copy Price List
             </button>
         </div>
 
-        <div class="glass rounded-2xl shadow-lg overflow-hidden border border-theme-100/50">
-            <table class="w-full text-left">
-                <thead>
-                    <tr class="bg-theme-500/10 text-theme-700 text-[10px] uppercase font-black tracking-widest">
-                        <th class="p-4 border-b border-theme-100">Product</th>
-                        <th class="p-4 border-b border-theme-100 text-right">Coins</th>
-                        <th class="p-4 border-b border-theme-100 text-right text-theme-600">Price (MMK)</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body" class="text-sm divide-y divide-theme-100/30 font-medium"></tbody>
-            </table>
+        <div class="glass rounded-2xl shadow-lg border border-theme-100/50">
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr class="bg-theme-500/10 text-theme-700 text-[11px] uppercase font-black tracking-widest">
+                            <th class="p-4 border-b border-theme-100 text-left">Product</th>
+                            <th class="p-4 border-b border-theme-100 text-right">Coins</th>
+                            <th class="p-4 border-b border-theme-100 text-right text-theme-600">Selling Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="text-sm divide-y divide-theme-100/30 font-medium"></tbody>
+                </table>
+            </div>
         </div>
+        <p class="text-center text-[10px] mt-4 opacity-50 uppercase tracking-widest">Swipe table to scroll →</p>
     </main>
 
     <script>
@@ -121,13 +128,17 @@
         function setTheme(theme) { document.documentElement.className = theme; }
         function switchTab(region) { currentRegion = region; render(); }
 
+        // Core Rounding Logic (Up to nearest 50)
         function roundUpTo50(num) {
+            if (num === 0) return 0;
             return Math.ceil(num / 50) * 50;
         }
 
         function render() {
             const btnPh = document.getElementById('btn-ph');
             const btnBr = document.getElementById('btn-br');
+            
+            // UI Update
             btnPh.className = currentRegion === 'ph' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
             btnBr.className = currentRegion === 'br' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
 
@@ -154,13 +165,21 @@
         document.getElementById('profitMargin').addEventListener('input', render);
 
         function copyToClipboard() {
-            if (calculatedItems.length === 0) return;
+            if (calculatedItems.length === 0 || !document.getElementById('coinPrice').value) {
+                alert("Please enter values first!");
+                return;
+            }
             let text = `📦 CAYM’S STORE PRICE LIST\n━━━━━━━━━━━━━━━━━━━━\n`;
             calculatedItems.forEach(i => text += `${i.name} : ${i.price.toLocaleString()} MMK\n`);
-            text += `━━━━━━━━━━━━━━━━━━━━\nThank you for your support! ✨`;
-            navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
+            text += `━━━━━━━━━━━━━━━━━━━━\nThank you for choosing CAYM’S STORE! ✨`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            });
         }
-        render();
+
+        // Run once on load to show table
+        window.onload = render;
     </script>
 </body>
 </html>
