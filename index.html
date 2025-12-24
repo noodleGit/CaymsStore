@@ -35,9 +35,9 @@
         .midnight .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
         .midnight input { background: #1e293b; color: white; border-color: #475569; }
         
-        /* Fixed Horizontal Scroll for Mobile */
+        /* Table Scroll Fix */
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { min-width: 500px; width: 100%; border-collapse: collapse; }
+        table { min-width: 600px; width: 100%; border-collapse: collapse; }
         td, th { white-space: nowrap; }
     </style>
 </head>
@@ -87,6 +87,7 @@
                         <tr class="bg-theme-500/10 text-theme-700 text-[11px] uppercase font-black tracking-widest">
                             <th class="p-4 border-b border-theme-100 text-left">Product</th>
                             <th class="p-4 border-b border-theme-100 text-right">Coins</th>
+                            <th class="p-4 border-b border-theme-100 text-right text-gray-400">Initial Price</th>
                             <th class="p-4 border-b border-theme-100 text-right text-theme-600">Selling Price</th>
                         </tr>
                     </thead>
@@ -94,7 +95,7 @@
                 </table>
             </div>
         </div>
-        <p class="text-center text-[10px] mt-4 opacity-50 uppercase tracking-widest">Swipe table to scroll →</p>
+        <p class="text-center text-[10px] mt-4 opacity-50 uppercase tracking-widest">Swipe table to view all columns →</p>
     </main>
 
     <script>
@@ -128,7 +129,6 @@
         function setTheme(theme) { document.documentElement.className = theme; }
         function switchTab(region) { currentRegion = region; render(); }
 
-        // Core Rounding Logic (Up to nearest 50)
         function roundUpTo50(num) {
             if (num === 0) return 0;
             return Math.ceil(num / 50) * 50;
@@ -138,7 +138,6 @@
             const btnPh = document.getElementById('btn-ph');
             const btnBr = document.getElementById('btn-br');
             
-            // UI Update
             btnPh.className = currentRegion === 'ph' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
             btnBr.className = currentRegion === 'br' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
 
@@ -148,13 +147,14 @@
             
             calculatedItems = [];
             const rows = data[currentRegion].map(item => {
-                const base = item.coins * rate;
-                const selling = roundUpTo50(base * (1 + profitInput / 100));
+                const initial = item.coins * rate;
+                const selling = roundUpTo50(initial * (1 + profitInput / 100));
                 calculatedItems.push({ name: item.name, price: selling });
                 
                 return `<tr class="hover:bg-theme-50/50 transition-colors">
                     <td class="p-4 text-gray-700 dark:text-gray-300 font-bold">${item.name}</td>
                     <td class="p-4 text-right text-gray-400 font-mono text-xs">$${item.coins}</td>
+                    <td class="p-4 text-right text-gray-400 font-mono text-sm">${initial.toLocaleString(undefined, {maximumFractionDigits: 0})} K</td>
                     <td class="p-4 text-right text-theme-600 font-black text-lg font-mono">${selling.toLocaleString()} K</td>
                 </tr>`;
             }).join('');
@@ -165,8 +165,9 @@
         document.getElementById('profitMargin').addEventListener('input', render);
 
         function copyToClipboard() {
-            if (calculatedItems.length === 0 || !document.getElementById('coinPrice').value) {
-                alert("Please enter values first!");
+            const costVal = document.getElementById('coinPrice').value;
+            if (calculatedItems.length === 0 || !costVal) {
+                alert("Please enter a cost price first!");
                 return;
             }
             let text = `📦 CAYM’S STORE PRICE LIST\n━━━━━━━━━━━━━━━━━━━━\n`;
@@ -174,11 +175,10 @@
             text += `━━━━━━━━━━━━━━━━━━━━\nThank you for choosing CAYM’S STORE! ✨`;
             
             navigator.clipboard.writeText(text).then(() => {
-                alert("Copied to clipboard!");
+                alert("Copied price list to clipboard!");
             });
         }
 
-        // Run once on load to show table
         window.onload = render;
     </script>
 </body>
