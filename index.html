@@ -35,7 +35,6 @@
         .midnight .glass { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
         .midnight input { background: #1e293b; color: white; border-color: #475569; }
         
-        /* Table Scroll Fix */
         .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { min-width: 600px; width: 100%; border-collapse: collapse; }
         td, th { white-space: nowrap; }
@@ -69,57 +68,73 @@
             </div>
         </div>
 
-        <div class="flex p-1 bg-white/30 rounded-xl mb-4 shadow-inner border border-theme-100">
+        <div class="flex p-1 bg-white/30 rounded-xl mb-6 shadow-inner border border-theme-100">
             <button onclick="switchTab('ph')" id="btn-ph" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all">🇵🇭 PH</button>
             <button onclick="switchTab('br')" id="btn-br" class="flex-1 py-2.5 rounded-lg text-sm font-bold transition-all">🇧🇷 BR</button>
         </div>
 
-        <div class="flex justify-end mb-4">
-            <button onclick="copyToClipboard()" class="bg-theme-600 hover:bg-theme-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-theme-500/40 flex items-center gap-2 active:scale-95 transition">
-                <i class="fa-solid fa-copy"></i> Copy Price List
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <button onclick="copyResell()" class="bg-gray-800 text-white px-4 py-3 rounded-xl text-xs font-bold shadow-lg hover:bg-black transition flex flex-col items-center gap-1">
+                <i class="fa-solid fa-users"></i>
+                <span>COPY RESELL LIST</span>
+            </button>
+            <button onclick="copyNormal()" class="bg-theme-600 text-white px-4 py-3 rounded-xl text-xs font-bold shadow-lg hover:bg-theme-700 transition flex flex-col items-center gap-1">
+                <i class="fa-solid fa-star"></i>
+                <span>COPY NORMAL LIST</span>
             </button>
         </div>
 
-        <div class="glass rounded-2xl shadow-lg border border-theme-100/50">
+        <div class="glass rounded-2xl shadow-lg border border-theme-100/50 mb-4">
             <div class="table-container">
                 <table>
                     <thead>
                         <tr class="bg-theme-500/10 text-theme-700 text-[11px] uppercase font-black tracking-widest">
                             <th class="p-4 border-b border-theme-100 text-left">Product</th>
                             <th class="p-4 border-b border-theme-100 text-right">Coins</th>
-                            <th class="p-4 border-b border-theme-100 text-right text-gray-400">Initial Price</th>
-                            <th class="p-4 border-b border-theme-100 text-right text-theme-600">Selling Price</th>
+                            <th class="p-4 border-b border-theme-100 text-right text-gray-400">Initial</th>
+                            <th class="p-4 border-b border-theme-100 text-right text-theme-600 font-black">Selling Price</th>
                         </tr>
                     </thead>
                     <tbody id="table-body" class="text-sm divide-y divide-theme-100/30 font-medium"></tbody>
                 </table>
             </div>
         </div>
-        <p class="text-center text-[10px] mt-4 opacity-50 uppercase tracking-widest">Swipe table to view all columns →</p>
+        <p class="text-center text-[10px] opacity-50 uppercase tracking-widest mb-10">Swipe table to view all info →</p>
     </main>
 
     <script>
         const data = {
             ph: [
-                { name: "11 Diamonds", coins: 9.5 }, { name: "22 Diamonds", coins: 19.0 }, { name: "33 Diamonds", coins: 28.5 },
-                { name: "44 Diamonds", coins: 38.0 }, { name: "56 Diamonds", coins: 47.5 }, { name: "112 Diamonds", coins: 95.0 },
-                { name: "223 Diamonds", coins: 190.0 }, { name: "279 Diamonds", coins: 237.5 }, { name: "301 Diamonds", coins: 256.5 },
-                { name: "335 Diamonds", coins: 300.0 }, { name: "336 Diamonds", coins: 285.0 }, { name: "570 Diamonds", coins: 475.0 },
-                { name: "1163 Diamonds", coins: 950.0 }, { name: "2398 Diamonds", coins: 1900.0 }, { name: "6042 Diamonds", coins: 4750.0 },
-                { name: "Weekly Pass (WP)", coins: 47.45 }, { name: "Twilight Pack (TWP)", coins: 475.0 }
+                { name: "11 Diamonds", coins: 9.5, cat: "small" }, { name: "22 Diamonds", coins: 19.0, cat: "small" }, 
+                { name: "33 Diamonds", coins: 28.5, cat: "bundle" }, { name: "44 Diamonds", coins: 38.0, cat: "bundle" }, 
+                { name: "56 Diamonds", coins: 47.5, cat: "bundle" }, { name: "112 Diamonds", coins: 95.0, cat: "bundle" },
+                { name: "223 Diamonds", coins: 190.0, cat: "bundle" }, { name: "279 Diamonds", coins: 237.5, cat: "bundle" }, 
+                { name: "301 Diamonds", coins: 256.5, cat: "bundle" }, { name: "335 Diamonds", coins: 300.0, cat: "bundle" }, 
+                { name: "336 Diamonds", coins: 285.0, cat: "bundle" }, { name: "570 Diamonds", coins: 475.0, cat: "bundle" },
+                { name: "1163 Diamonds", coins: 950.0, cat: "bundle" }, { name: "2398 Diamonds", coins: 1900.0, cat: "bundle" }, 
+                { name: "6042 Diamonds", coins: 4750.0, cat: "bundle" },
+                { name: "Weekly Pass (WP)", coins: 47.45, cat: "pass" }, 
+                { name: "Twilight Pass", coins: 475.0, cat: "pass" }
             ],
             br: [
-                { name: "Weekly Pass (WP)", coins: 76.0 }, { name: "86 Diamonds", coins: 61.5 }, { name: "172 Diamonds", coins: 122.0 },
-                { name: "257 Diamonds", coins: 177.5 }, { name: "343 Diamonds", coins: 239.0 }, { name: "344 Diamonds", coins: 244.0 },
-                { name: "429 Diamonds", coins: 299.5 }, { name: "430 Diamonds", coins: 305.5 }, { name: "514 Diamonds", coins: 355.0 },
-                { name: "600 Diamonds", coins: 416.5 }, { name: "706 Diamonds", coins: 480.0 }, { name: "792 Diamonds", coins: 541.5 },
-                { name: "878 Diamonds", coins: 602.0 }, { name: "963 Diamonds", coins: 657.5 }, { name: "1049 Diamonds", coins: 719.0 },
-                { name: "1135 Diamonds", coins: 779.5 }, { name: "1220 Diamonds", coins: 835.0 }, { name: "1412 Diamonds", coins: 960.0 },
-                { name: "1584 Diamonds", coins: 1082.0 }, { name: "1669 Diamonds", coins: 1137.5 }, { name: "1755 Diamonds", coins: 1199.0 },
-                { name: "2195 Diamonds", coins: 1453.0 }, { name: "3688 Diamonds", coins: 2424.0 }, { name: "5532 Diamonds", coins: 3660.0 },
-                { name: "9288 Diamonds", coins: 6079.0 }, { name: "Twilight Pack (TWP)", coins: 402.5 }, { name: "Super Value Pass (SVP)", coins: 39 },
-                { name: "Limited Value Pack (MVP)", coins: 12 }, { name: "Double 50 (B50)", coins: 39 }, { name: "Double 150 (B150)", coins: 116.9 },
-                { name: "Double 250 (B250)", coins: 187.5 }, { name: "Double 500 (B500)", coins: 385.0 }
+                { name: "Weekly Pass (WP)", coins: 76.0, cat: "pass" },
+                { name: "Twilight Pass", coins: 402.5, cat: "pass" },
+                { name: "86 Diamonds", coins: 61.5, cat: "bundle" }, { name: "172 Diamonds", coins: 122.0, cat: "bundle" },
+                { name: "257 Diamonds", coins: 177.5, cat: "bundle" }, { name: "343 Diamonds", coins: 239.0, cat: "bundle" },
+                { name: "344 Diamonds", coins: 244.0, cat: "bundle" }, { name: "429 Diamonds", coins: 299.5, cat: "bundle" },
+                { name: "430 Diamonds", coins: 305.5, cat: "bundle" }, { name: "514 Diamonds", coins: 355.0, cat: "bundle" },
+                { name: "600 Diamonds", coins: 416.5, cat: "bundle" }, { name: "706 Diamonds", coins: 480.0, cat: "bundle" },
+                { name: "792 Diamonds", coins: 541.5, cat: "bundle" }, { name: "878 Diamonds", coins: 602.0, cat: "bundle" },
+                { name: "963 Diamonds", coins: 657.5, cat: "bundle" }, { name: "1049 Diamonds", coins: 719.0, cat: "bundle" },
+                { name: "1135 Diamonds", coins: 779.5, cat: "bundle" }, { name: "1220 Diamonds", coins: 835.0, cat: "bundle" },
+                { name: "1412 Diamonds", coins: 960.0, cat: "bundle" }, { name: "1584 Diamonds", coins: 1082.0, cat: "bundle" },
+                { name: "1669 Diamonds", coins: 1137.5, cat: "bundle" }, { name: "1755 Diamonds", coins: 1199.0, cat: "bundle" },
+                { name: "2195 Diamonds", coins: 1453.0, cat: "bundle" }, { name: "3688 Diamonds", coins: 2424.0, cat: "bundle" },
+                { name: "5532 Diamonds", coins: 3660.0, cat: "bundle" }, { name: "9288 Diamonds", coins: 6079.0, cat: "bundle" },
+                { name: "Super Value Pass (SVP)", coins: 39, cat: "pass" },
+                { name: "Limited Value Pack (MVP)", coins: 12, cat: "small" },
+                { name: "50 2x", coins: 39, cat: "double" }, { name: "150 2x", coins: 116.9, cat: "double" },
+                { name: "250 2x", coins: 187.5, cat: "double" }, { name: "500 2x", coins: 385.0, cat: "double" }
             ]
         };
 
@@ -128,16 +143,11 @@
 
         function setTheme(theme) { document.documentElement.className = theme; }
         function switchTab(region) { currentRegion = region; render(); }
-
-        function roundUpTo50(num) {
-            if (num === 0) return 0;
-            return Math.ceil(num / 50) * 50;
-        }
+        function roundUpTo50(num) { return num === 0 ? 0 : Math.ceil(num / 50) * 50; }
 
         function render() {
             const btnPh = document.getElementById('btn-ph');
             const btnBr = document.getElementById('btn-br');
-            
             btnPh.className = currentRegion === 'ph' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
             btnBr.className = currentRegion === 'br' ? "flex-1 py-2.5 rounded-lg text-sm font-bold bg-theme-600 text-white shadow-md" : "flex-1 py-2.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-theme-100 transition";
 
@@ -149,12 +159,12 @@
             const rows = data[currentRegion].map(item => {
                 const initial = item.coins * rate;
                 const selling = roundUpTo50(initial * (1 + profitInput / 100));
-                calculatedItems.push({ name: item.name, price: selling });
+                calculatedItems.push({ ...item, sellingPrice: selling });
                 
                 return `<tr class="hover:bg-theme-50/50 transition-colors">
                     <td class="p-4 text-gray-700 dark:text-gray-300 font-bold">${item.name}</td>
                     <td class="p-4 text-right text-gray-400 font-mono text-xs">$${item.coins}</td>
-                    <td class="p-4 text-right text-gray-400 font-mono text-sm">${initial.toLocaleString(undefined, {maximumFractionDigits: 0})} K</td>
+                    <td class="p-4 text-right text-gray-400 font-mono text-xs">${initial.toLocaleString(undefined, {maximumFractionDigits:0})} K</td>
                     <td class="p-4 text-right text-theme-600 font-black text-lg font-mono">${selling.toLocaleString()} K</td>
                 </tr>`;
             }).join('');
@@ -164,19 +174,49 @@
         document.getElementById('coinPrice').addEventListener('input', render);
         document.getElementById('profitMargin').addEventListener('input', render);
 
-        function copyToClipboard() {
-            const costVal = document.getElementById('coinPrice').value;
-            if (calculatedItems.length === 0 || !costVal) {
-                alert("Please enter a cost price first!");
-                return;
-            }
-            let text = `📦 CAYM’S STORE PRICE LIST\n━━━━━━━━━━━━━━━━━━━━\n`;
-            calculatedItems.forEach(i => text += `${i.name} : ${i.price.toLocaleString()} MMK\n`);
-            text += `━━━━━━━━━━━━━━━━━━━━\nThank you for choosing CAYM’S STORE! ✨`;
+        // Copy Resell Version
+        function copyResell() {
+            if (!calculatedItems.length || !document.getElementById('coinPrice').value) return alert("Enter values!");
             
-            navigator.clipboard.writeText(text).then(() => {
-                alert("Copied price list to clipboard!");
+            let t = `📦 CAYM’S STORE RESELL PRICE LIST\n━━━━━━━━━━━━━━━\n`;
+            calculatedItems.forEach(i => {
+                t += `${i.name} : ${i.sellingPrice.toLocaleString()} MMK\n`;
+                if(i.cat === 'pass' || i.name.includes('MVP')) t += `\n`; // Add space after passes
             });
+            t += `━━━━━━━━━━━━━━━\n💵 🏧 — 09794969874 KST\n\nငွေလွှဲပြေစာပို့ပြီး ID, Server ID, ဝယ်ချင်တဲ့ Dia ကိုပို့ပေးပါဗျ\n━━━━━━━━━━━━━━━\nThank you for choosing CAYM’S STORE! ✨`;
+            executeCopy(t);
+        }
+
+        // Copy Normal Version
+        function copyNormal() {
+            if (!calculatedItems.length || !document.getElementById('coinPrice').value) return alert("Enter values!");
+            
+            const filter = (cat) => calculatedItems.filter(i => i.cat === cat);
+            
+            let t = `❗️❗️❗️❗️❗️❗️\n\n🌟Weekly & 🤩Twilight Pass\n`;
+            filter('pass').forEach(i => t += `${i.name}: ${i.sellingPrice.toLocaleString()} Ks\n`);
+            
+            const doubles = filter('double');
+            if(doubles.length > 0) {
+                t += `———————————————\n💎Double Diamond (2ဆ ရပါမယ်)\n`;
+                doubles.forEach(i => t += `${i.name}: ${i.sellingPrice.toLocaleString()} Ks\n`);
+            }
+
+            const smalls = filter('small');
+            if(smalls.length > 0) {
+                t += `———————————————\n💎Small Diamonds\n`;
+                smalls.forEach(i => t += `${i.name.replace(' Diamonds', '')}: ${i.sellingPrice.toLocaleString()} Ks\n`);
+            }
+
+            t += `———————————————\n💎Diamond Bundles\n`;
+            filter('bundle').forEach(i => t += `${i.name.replace(' Diamonds', '')}: ${i.sellingPrice.toLocaleString()} Ks\n`);
+            
+            t += `———————————————\n📣Channel — Channel\n\n✈️ Order — @shawtycaym ✅`;
+            executeCopy(t);
+        }
+
+        function executeCopy(text) {
+            navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
         }
 
         window.onload = render;
